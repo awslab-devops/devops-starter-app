@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
-        git 'https://github.com/YOUR-USERNAME/devops-starter-app.git'
+        git 'https://github.com/awslab-devops/devops-starter-app.git'
       }
     }
 
@@ -16,13 +16,13 @@ pipeline {
 
     stage('Tag Image') {
       steps {
-        sh 'docker tag devops-app YOUR-DOCKERHUB-USERNAME/devops-app'
+        sh 'docker tag devops-app docker21devops/devops-app'
       }
     }
 
     stage('Push to Docker Hub') {
       steps {
-        sh 'docker push YOUR-DOCKERHUB-USERNAME/devops-app'
+        sh 'docker push docker21devops/devops-app'
       }
     }
   }
