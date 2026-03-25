@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: devops-app
-        image: YOUR-DOCKERHUB-USERNAME/devops-app
+        image: docker21devops/devops-app
         ports:
         - containerPort: 3000
