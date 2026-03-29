@@ -24,7 +24,7 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: '84701967-e6ae-4a70-81e4-f0c4aea9e9cd', usernameVariable: 'docker21devops', passwordVariable: 'MyDockerpwd@123')]) {
           sh '''
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
           docker push docker21devops/devops-app:latest
           '''
         }
