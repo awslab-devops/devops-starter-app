@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
-        git branch: 'main', url: 'https://github.com/awslab-devops/devops-starter-app.git'
+        git 'https://github.com/awslab-devops/devops-starter-app.git'
       }
     }
 
@@ -19,18 +19,25 @@ pipeline {
         sh 'docker tag devops-app docker21devops/devops-app:latest'
       }
     }
+
     stage('Docker Login & Push') {
       steps {
-        withCredentials([usernamePassword(
-          credentialsId: 'dockerhub-cred',
-          usernameVariable: 'DOCKER_USER',
-          passwordVariable: 'DOCKER_PASS'
-        )]) {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
           sh '''
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          echo "$PASS" | docker login -u "$USER" --password-stdin
           docker push docker21devops/devops-app:latest
           '''
         }
+      }
+    }
+
+    stage('Deploy Locally') {
+      steps {
+        sh '''
+        docker stop devops-app || true
+        docker rm devops-app || true
+        docker run -d -p 3000:3000 --restart=always --name devops-app docker21devops/devops-app:latest
+        '''
       }
     }
   }
