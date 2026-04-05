@@ -9,10 +9,10 @@ pipeline {
     }
 
     stage('Build Docker Image') {
-      steps {
-        sh 'docker build -t devops-app .'
-      }
-    }
+  steps {
+    sh 'docker build --no-cache -t devops-app .'
+  }
+}
 
     stage('Tag Image') {
       steps {
