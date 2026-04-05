@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send('Hello DevOps!');
+  res.send('Hello from DevOps!, version 2');
 });
 
 app.listen(3000, '0.0.0.0', () => {
