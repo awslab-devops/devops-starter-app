@@ -2,10 +2,9 @@ pipeline {
   agent any
 
   environment {
-    IMAGE_NAME = "docker21devops/devops-app"
-    IMAGE_TAG = "${BUILD_NUMBER}"   // auto version
-    CONTAINER_NAME = "devops-app"
-  }
+  IMAGE_NAME = "docker21devops/devops-app"
+  CONTAINER_NAME = "devops-app"
+}
   
   stages {
   stage('Clean Workspace') {
@@ -51,13 +50,17 @@ pipeline {
     stage('Deploy') {
   steps {
     sh '''
-    docker pull $IMAGE_NAME:$IMAGE_TAG
+    TAG=${IMAGE_TAG:-latest}
+
+    echo "Deploying version: $TAG"
+
+    docker pull $IMAGE_NAME:$TAG
     docker stop $CONTAINER_NAME || true
     docker rm $CONTAINER_NAME || true
     docker run -d -p 3000:3000 \
-      -e BUILD_NUMBER=$IMAGE_TAG \
+      -e BUILD_NUMBER=$TAG \
       --name $CONTAINER_NAME \
-      $IMAGE_NAME:$IMAGE_TAG
+      $IMAGE_NAME:$TAG
         '''
       }
     }
