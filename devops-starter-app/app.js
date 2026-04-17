@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send("Webhook test - hey, this is Mamatha" + new Date());
+  res.send("Build number: " + process.env.BUILD_NUMBER);
 });
 
 app.listen(3000, '0.0.0.0', () => {
