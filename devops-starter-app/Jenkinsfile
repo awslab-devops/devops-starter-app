@@ -49,12 +49,15 @@ pipeline {
     }
 
     stage('Deploy') {
-      steps {
-        sh '''
-        docker pull $IMAGE_NAME:$IMAGE_TAG
-        docker stop $CONTAINER_NAME || true
-        docker rm $CONTAINER_NAME || true
-        docker run -d -p 3000:3000 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
+  steps {
+    sh '''
+    docker pull $IMAGE_NAME:$IMAGE_TAG
+    docker stop $CONTAINER_NAME || true
+    docker rm $CONTAINER_NAME || true
+    docker run -d -p 3000:3000 \
+      -e BUILD_NUMBER=$IMAGE_TAG \
+      --name $CONTAINER_NAME \
+      $IMAGE_NAME:$IMAGE_TAG
         '''
       }
     }
