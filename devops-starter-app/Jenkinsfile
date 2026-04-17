@@ -1,5 +1,11 @@
 pipeline {
   agent any
+
+  environment {
+    IMAGE_NAME = "docker21devops/devops-app"
+    IMAGE_TAG = "${BUILD_NUMBER}"   // auto version
+    CONTAINER_NAME = "devops-app"
+  }
   
   stages {
   stage('Clean Workspace') {
@@ -21,27 +27,34 @@ pipeline {
 
     stage('Tag Image') {
       steps {
-        sh 'docker tag devops-app docker21devops/devops-app:latest'
+        sh "docker tag devops-app ${IMAGE_NAME}:${IMAGE_TAG}"
+        sh "docker tag devops-app ${IMAGE_NAME}:latest"
       }
     }
 
     stage('Docker Login & Push') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+        withCredentials([usernamePassword(
+          credentialsId: 'dockerhub-cred',
+          usernameVariable: 'USER',
+          passwordVariable: 'PASS'
+        )]) {
           sh '''
           echo "$PASS" | docker login -u "$USER" --password-stdin
-          docker push docker21devops/devops-app:latest
+          docker push $IMAGE_NAME:$IMAGE_TAG
+          docker push $IMAGE_NAME:latest
           '''
         }
       }
     }
 
-    stage('Deploy Locally') {
+    stage('Deploy') {
       steps {
         sh '''
-        docker stop devops-app || true
-        docker rm devops-app || true
-        docker run -d -p 3000:3000 --restart=always --name devops-app docker21devops/devops-app:latest
+        docker pull $IMAGE_NAME:$IMAGE_TAG
+        docker stop $CONTAINER_NAME || true
+        docker rm $CONTAINER_NAME || true
+        docker run -d -p 3000:3000 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
         '''
       }
     }
