@@ -50,18 +50,28 @@ pipeline {
     stage('Deploy') {
   steps {
     sh '''
-    TAG=${IMAGE_TAG:-latest}
+    if [ -z "$IMAGE_TAG" ]; then
+      TAG=$BUILD_NUMBER
+      MODE="AUTO"
+    else
+      TAG=$IMAGE_TAG
+      MODE="ROLLBACK"
+    fi
 
     echo "Deploying version: $TAG"
 
     docker pull $IMAGE_NAME:$TAG
     docker stop $CONTAINER_NAME || true
     docker rm $CONTAINER_NAME || true
+
     docker run -d -p 3000:3000 \
       -e BUILD_NUMBER=$TAG \
       --name $CONTAINER_NAME \
       $IMAGE_NAME:$TAG
-        '''
+
+    # ✅ Save deployment history
+    echo "$(date) | Version: $TAG | Mode: $MODE" >> /var/log/deployments.log
+    '''
       }
     }
   }
