@@ -64,12 +64,14 @@ pipeline {
     docker stop $CONTAINER_NAME || true
     docker rm $CONTAINER_NAME || true
 
+    # create log file if not exists
+    touch /var/log/deployments.log
     docker run -d -p 3000:3000 \
+      -v /var/log/deployments.log:/var/log/deployments.log \
       -e BUILD_NUMBER=$TAG \
       --name $CONTAINER_NAME \
       $IMAGE_NAME:$TAG
 
-    # ✅ Save deployment history
     echo "$(date) | Version: $TAG | Mode: $MODE" >> /var/log/deployments.log
     '''
       }
