@@ -65,14 +65,14 @@ pipeline {
     docker rm $CONTAINER_NAME || true
 
     # create log file if not exists
-    touch /home/ec2-user/deployments.log
+    touch /tmp/deployments.log
     docker run -d -p 3000:3000 \
-      -v /home/ec2-user/deployments.log:/app/deployments.log \
+      -v /tmp/deployments.log:/app/deployments.log \
       -e BUILD_NUMBER=$TAG \
       --name $CONTAINER_NAME \
       $IMAGE_NAME:$TAG
 
-    echo "$(date) | Version: $TAG | Mode: $MODE" >> /home/ec2-user/deployments.log
+    echo "$(date) | Version: $TAG | Mode: $MODE" >> /tmp/deployments.log
     '''
       }
     }
