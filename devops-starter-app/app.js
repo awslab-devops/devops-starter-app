@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 
 // Deployment history route
 app.get('/history', (req, res) => {
-  fs.readFile('/home/ec2-user/deployments.log', 'utf8', (err, data) => {
+  fs.readFile('/app/deployments.log', 'utf8', (err, data) => {
     if (err) {
       return res.send(`
         <h2>Deployment History</h2>
